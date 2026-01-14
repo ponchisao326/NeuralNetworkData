@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "cobblemon_fabric_mdk",
+  "version": "${version}",
+  "name": "Neural Network Data",
+  "description": "A data grabber for training neural networks",
+  "authors": [
+    "Ponchisao326"
+  ],
+  "license": "MIT License",
+  "icon": "assets/example/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "main": [
+      "com.victorgponce.NeuralNetworkData"
+    ]
+  },
+  "depends": {
+    "minecraft": "1.21.1",
+    "cobblemon": ">=1.7.0"
+  }
+}
