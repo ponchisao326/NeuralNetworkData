@@ -17,8 +17,8 @@ public class OnPokemonCaptured {
         Pokemon pokemon = event.getPokemon();
 
         int level = pokemon.getLevel();
-        String nature = pokemon.getNature().getDisplayName();
-        String ability = pokemon.getAbility().getDisplayName();
+        String nature = pokemon.getNature().getName().getPath();
+        String ability = pokemon.getAbility().getName();
         boolean shiny = pokemon.getShiny();
 
         Ivs ivs = new Ivs(
@@ -30,7 +30,7 @@ public class OnPokemonCaptured {
                 pokemon.getIvs().get(Stats.SPEED)
         );
 
-        String ball_used = pokemon.getCaughtBall().toString();
+        String ball_used = pokemon.getCaughtBall().getName().getPath();
 
         float dexPercentage = BigDataUtils.getNationalDexPercentage(event.getPlayer());
 
