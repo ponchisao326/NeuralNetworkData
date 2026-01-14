@@ -4,15 +4,16 @@ import com.cobblemon.mod.common.api.events.pokemon.PokemonCapturedEvent;
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.victorgponce.data_objects.Ivs;
-import com.victorgponce.data_objects.PokemonCaught;
+import com.victorgponce.data_objects.CaughtPokemon;
 import com.victorgponce.utils.BigDataUtils;
 
-import static com.victorgponce.cache.PokemonData.pokemonCaughtArrayList;
+import static com.victorgponce.cache.PokemonData.caughtPokemonBuffer;
 
 public class OnPokemonCaptured {
 
-    public static void onCaptureEvent(PokemonCapturedEvent event) {
+    public static void onCapturedEvent(PokemonCapturedEvent event) {
         Pokemon pokemonCaptured = event.getPokemon();
+        long currentTimestamp = System.currentTimeMillis();
 
         int level = pokemonCaptured.getLevel();
         String nature = pokemonCaptured.getNature().getName().getPath();
@@ -32,16 +33,19 @@ public class OnPokemonCaptured {
 
         float dexPercentage = BigDataUtils.getNationalDexPercentage(event.getPlayer());
 
-        PokemonCaught pokemonCaught = new PokemonCaught(pokemonCaptured.getSpecies().getName(),
+        CaughtPokemon caughtPokemon = new CaughtPokemon(
+                pokemonCaptured.getUuid(),
+                pokemonCaptured.getSpecies().getName(),
                 level,
                 nature,
                 ability,
                 shiny,
                 ivs,
                 ballUsed,
-                dexPercentage);
+                dexPercentage,
+                currentTimestamp);
 
-        pokemonCaughtArrayList.add(pokemonCaught);
+        caughtPokemonBuffer.add(caughtPokemon);
     }
 
 }
