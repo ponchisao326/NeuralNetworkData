@@ -1,6 +1,7 @@
 package com.victorgponce;
 
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
+import com.victorgponce.events.OnPokemonCaptured;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ public class NeuralNetworkData implements ModInitializer {
     public void onInitialize() {
         LOGGER.info("Starting Neural Network Data");
 
-        // CobblemonEvents.POKEMON_CAPTURED.subscribe();
+        CobblemonEvents.POKEMON_CAPTURED.subscribe(OnPokemonCaptured::onCaptureEvent);
     }
 
 }
