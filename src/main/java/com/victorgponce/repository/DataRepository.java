@@ -26,6 +26,8 @@ public class DataRepository {
     private final ConcurrentLinkedQueue<PlayerSession> sessionBuffer = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<RaidInteraction> raidBuffer = new ConcurrentLinkedQueue<>();
 
+    private final ConcurrentLinkedQueue<GtsTransaction> gtsBuffer = new ConcurrentLinkedQueue<>();
+
     // Temporal maps
     private final ConcurrentHashMap<UUID, Long> battleStartTimestamps = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, Float>> battleDamageTracker = new ConcurrentHashMap<>();
@@ -46,6 +48,8 @@ public class DataRepository {
     public ConcurrentLinkedQueue<PlayerSession> getSessionBuffer() { return sessionBuffer; }
     public ConcurrentLinkedQueue<RaidInteraction> getRaidBuffer() { return raidBuffer; }
 
+    public ConcurrentLinkedQueue<GtsTransaction> getGtsBuffer() { return gtsBuffer; }
+
     // --- State Management Methods ---
 
     public void addCaught(CaughtPokemon data) { caughtPokemonBuffer.add(data); }
@@ -54,6 +58,8 @@ public class DataRepository {
     public void addBattleResult(BattleResult data) { battleResultsBuffer.add(data); }
     public void addSession(PlayerSession data) { sessionBuffer.add(data); }
     public void addRaidInteraction(RaidInteraction data) { raidBuffer.add(data); }
+
+    public void addGtsTransaction(GtsTransaction data) { gtsBuffer.add(data); }
 
     public void saveBattleStartTime(UUID battleId, long timestamp) {
         battleStartTimestamps.put(battleId, timestamp);

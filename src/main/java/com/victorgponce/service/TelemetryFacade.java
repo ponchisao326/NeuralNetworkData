@@ -12,7 +12,13 @@ import com.victorgponce.repository.DataRepository;
 import com.victorgponce.utils.BigDataUtils;
 import com.victorgponce.utils.DataUtils;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import org.pokesplash.gts.Gts;
+import org.pokesplash.gts.Listing.ItemListing;
+import org.pokesplash.gts.Listing.Listing;
+import org.pokesplash.gts.Listing.PokemonListing;
+import org.pokesplash.gts.api.event.events.PurchaseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -320,5 +326,70 @@ public class TelemetryFacade {
         repository.removeDamageTracker(foundBattleId);
         repository.removeBattleStartTime(foundBattleId);
         repository.markBattleFinished(foundBattleId);
+    }
+
+    public void processGtsTransaction(PurchaseEvent event) {
+        Listing<?> listing = event.getProduct();
+        long now = System.currentTimeMillis();
+
+        // 1. Extraer Datos Básicos
+        String sellerUuid = listing.getSellerUuid().toString();
+        String buyerUuid = event.getBuyer().toString(); // PurchaseEvent tiene el método getBuyer()
+        double price = listing.getPrice();
+
+        // 2. Calcular Liquidez (Tiempo en el mercado)
+        // Fórmula: DuraciónTotal - (FechaFin - Ahora)
+        long durationMs = -1;
+        double configDurationHours = Gts.config.getListingDuration();
+
+        if (listing.getEndTime() != -1 && configDurationHours > 0) {
+            long maxDurationMs = (long) (configDurationHours * 3600000L);
+            long remainingTime = listing.getEndTime() - now;
+            durationMs = maxDurationMs - remainingTime;
+
+            // Corrección por seguridad (si el lag causa negativos)
+            if (durationMs < 0) durationMs = 0;
+        }
+
+        // 3. Determinar Tipo y Descripción
+        String type;
+        String description;
+
+        if (listing instanceof PokemonListing pokemonListing) {
+            type = "POKEMON";
+            Pokemon pokemon = pokemonListing.getListing(); // Devuelve el objeto Pokemon de Cobblemon
+
+            String species = pokemon.getSpecies().getName();
+            int level = pokemon.getLevel();
+            String shinyStr = pokemon.getShiny() ? " (Shiny)" : "";
+
+            description = species + " Lvl" + level + shinyStr;
+
+        } else if (listing instanceof ItemListing itemListing) {
+            type = "ITEM";
+            ItemStack itemStack = itemListing.getListing(); // Devuelve ItemStack
+
+            String itemName = itemStack.getName().getString();
+            int count = itemStack.getCount();
+
+            description = itemName + " (x" + count + ")";
+        } else {
+            type = "UNKNOWN";
+            description = listing.getListingName();
+        }
+
+        // 4. Crear DTO y guardar
+        GtsTransaction data = new GtsTransaction(
+                sellerUuid,
+                buyerUuid,
+                type,
+                description,
+                price,
+                durationMs,
+                now
+        );
+
+        repository.addGtsTransaction(data);
+        LOGGER.info("BigData ECONOMY: Sold {} for {}", description, price);
     }
 }

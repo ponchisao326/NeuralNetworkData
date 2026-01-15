@@ -38,9 +38,11 @@ public class GetBufferedData implements CommandRegistrationCallback {
                     string.append("------------------ onRaid Data ------------------\n");
                     for (RaidInteraction d : repo.getRaidBuffer()) string.append(d.toJson()).append("\n");
 
-                    string.append("----------------------------------------------------\n");
-
-                    player.sendMessage(Text.literal(string.toString()));
+                    // string.append("------------------ onGts Data -----------------\n");
+                    // for (GtsTransaction d : repo.getGtsBuffer()) string.append(d.toJson()).append("\n");
+//
+                    // string.append("------------------ onSession Data ------------------\n");
+                    // for (PlayerSession d : repo.getSessionBuffer()) string.append(d.toJson()).append("\n");
 
                     return 1;
                 }));
