@@ -6,7 +6,6 @@ import com.cobblemon.mod.common.api.events.battles.BattleFledEvent;
 import com.cobblemon.mod.common.api.events.battles.BattleVictoryEvent;
 import com.cobblemon.mod.common.battles.actor.PlayerBattleActor;
 import com.cobblemon.mod.common.battles.pokemon.BattlePokemon;
-import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.victorgponce.cache.PokemonData;
 import com.victorgponce.data_objects.BattleResult;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -40,7 +39,6 @@ public class OnBattleEnd {
         }
     }
 
-    // --- MANEJADOR DE HUIDA ---
     // --- FLEE Manager ---
     public static void onFlee(BattleFledEvent event) {
         PokemonBattle battle = event.getBattle();
@@ -129,7 +127,6 @@ public class OnBattleEnd {
                 currentTimestamp
         );
 
-        OnRaidInteraction.checkAndStore(battle, playerActor, result, durationMs, biome);
         battleResultsBuffer.add(data);
 
         PokemonData.finishedBattleTimestamps.put(battle.getBattleId(), System.currentTimeMillis());

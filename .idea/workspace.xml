@@ -4,18 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="50f9646e-adfa-44e2-b50d-a602c55698e3" name="Changes" comment="Add event handlers for battle outcomes and track battle results">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/data_objects/PlayerSession.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/data_objects/RaidInteraction.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnBattleDamage.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnPlayerLogin.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnRaidInteraction.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/Minecraft_Server.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Minecraft_Server.xml" afterDir="false" />
+    <list default="true" id="50f9646e-adfa-44e2-b50d-a602c55698e3" name="Changes" comment="Add event handlers for battle damage tracking and player session management">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/data_objects/RaidMetadata.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnNativeRaidEvent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/victorgponce/NeuralNetworkData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/NeuralNetworkData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/victorgponce/cache/PokemonData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/cache/PokemonData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/victorgponce/commands/GetBufferedData.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/commands/GetBufferedData.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnBattleDamage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnBattleDamage.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnBattleEnd.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnBattleEnd.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnBattleStarted.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnBattleStarted.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/victorgponce/events/OnRaidInteraction.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -320,7 +320,15 @@
       <option name="project" value="LOCAL" />
       <updated>1768440806796</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Add event handlers for battle damage tracking and player session management">
+      <option name="closed" value="true" />
+      <created>1768442827493</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1768442827493</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -342,7 +350,8 @@
     <MESSAGE value="Update README.md to enhance project description and clarify data capture details" />
     <MESSAGE value="Add BattleResult data object for tracking battle outcomes" />
     <MESSAGE value="Add event handlers for battle outcomes and track battle results" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add event handlers for battle outcomes and track battle results" />
+    <MESSAGE value="Add event handlers for battle damage tracking and player session management" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add event handlers for battle damage tracking and player session management" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

@@ -29,6 +29,7 @@ public class NeuralNetworkData implements ModInitializer {
         // Damage Register
         OnBattleDamage.register();
         OnPlayerLogin.register();
+        OnNativeRaidEvent.register();
     }
 
 }

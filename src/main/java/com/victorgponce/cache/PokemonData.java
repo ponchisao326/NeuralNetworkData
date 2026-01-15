@@ -22,6 +22,8 @@ public class PokemonData {
     public static ConcurrentHashMap<UUID, Long> battleStartTimestamps = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<UUID, ConcurrentHashMap<UUID, Float>> battleDamageTracker = new ConcurrentHashMap<>();
 
+    public static ConcurrentHashMap<UUID, RaidMetadata> raidMetadataCache = new ConcurrentHashMap<>();
+
     // --- "Final timestamp" registry for cleanup ---
     public static ConcurrentHashMap<UUID, Long> finishedBattleTimestamps = new ConcurrentHashMap<>();
 
@@ -38,6 +40,7 @@ public class PokemonData {
                 // Security time has ended, delete everything
                 battleDamageTracker.remove(battleId);
                 battleStartTimestamps.remove(battleId);
+                raidMetadataCache.remove(battleId);
                 finishedBattleTimestamps.remove(battleId);
                 LOGGER.info("Limpieza de Memoria: Batalla " + battleId + " eliminada.");
             }
