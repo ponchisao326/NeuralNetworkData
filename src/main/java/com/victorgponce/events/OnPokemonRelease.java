@@ -10,6 +10,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 import static com.victorgponce.cache.PokemonData.releasedPokemonBuffer;
+import static com.victorgponce.utils.DataUtils.getTotalIvs;
 
 public class OnPokemonRelease {
 
@@ -24,14 +25,7 @@ public class OnPokemonRelease {
         boolean shiny = pokemonReleased.getShiny();
 
         // Ivs (Vital to know if release was to delete garbage or not)
-        Ivs ivs = new Ivs(
-                pokemonReleased.getIvs().get(Stats.HP),
-                pokemonReleased.getIvs().get(Stats.ATTACK),
-                pokemonReleased.getIvs().get(Stats.DEFENCE),
-                pokemonReleased.getIvs().get(Stats.SPECIAL_ATTACK),
-                pokemonReleased.getIvs().get(Stats.SPECIAL_DEFENCE),
-                pokemonReleased.getIvs().get(Stats.SPEED)
-        );
+        Ivs ivs = getTotalIvs(pokemonReleased);
 
         // Obtain player (null if deleted by command)
         String playerUuid = "unknown";

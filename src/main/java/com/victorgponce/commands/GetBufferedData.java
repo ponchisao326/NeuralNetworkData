@@ -2,6 +2,7 @@ package com.victorgponce.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.victorgponce.data_objects.CaughtPokemon;
+import com.victorgponce.data_objects.PokemonHatched;
 import com.victorgponce.data_objects.ReleasedPokemon;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandRegistryAccess;
@@ -10,8 +11,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-import static com.victorgponce.cache.PokemonData.caughtPokemonBuffer;
-import static com.victorgponce.cache.PokemonData.releasedPokemonBuffer;
+import static com.victorgponce.cache.PokemonData.*;
 
 public class GetBufferedData implements CommandRegistrationCallback {
 
@@ -33,6 +33,12 @@ public class GetBufferedData implements CommandRegistrationCallback {
                     for (ReleasedPokemon releasedPokemon : releasedPokemonBuffer) {
                         string.append(releasedPokemon.toJson()).append("\n");
                     }
+                    string.append("------------------ onHatched Data ------------------\n");
+                    for (PokemonHatched pokemonHatched : hatchedPokemonBuffer) {
+                        string.append(pokemonHatched.toJson()).append("\n");
+                    }
+
+                    string.append("----------------------------------------------------\n");
 
                     player.sendMessage(Text.literal(string.toString()));
 

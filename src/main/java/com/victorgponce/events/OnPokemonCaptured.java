@@ -8,6 +8,7 @@ import com.victorgponce.data_objects.CaughtPokemon;
 import com.victorgponce.utils.BigDataUtils;
 
 import static com.victorgponce.cache.PokemonData.caughtPokemonBuffer;
+import static com.victorgponce.utils.DataUtils.getTotalIvs;
 
 public class OnPokemonCaptured {
 
@@ -20,14 +21,7 @@ public class OnPokemonCaptured {
         String ability = pokemonCaptured.getAbility().getName();
         boolean shiny = pokemonCaptured.getShiny();
 
-        Ivs ivs = new Ivs(
-                pokemonCaptured.getIvs().get(Stats.HP),
-                pokemonCaptured.getIvs().get(Stats.ATTACK),
-                pokemonCaptured.getIvs().get(Stats.DEFENCE),
-                pokemonCaptured.getIvs().get(Stats.SPECIAL_ATTACK),
-                pokemonCaptured.getIvs().get(Stats.SPECIAL_DEFENCE),
-                pokemonCaptured.getIvs().get(Stats.SPEED)
-        );
+        Ivs ivs = getTotalIvs(pokemonCaptured);
 
         String ballUsed = pokemonCaptured.getCaughtBall().getName().getPath();
 
