@@ -1,6 +1,7 @@
 package com.victorgponce.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.victorgponce.data_objects.BattleResult;
 import com.victorgponce.data_objects.CaughtPokemon;
 import com.victorgponce.data_objects.PokemonHatched;
 import com.victorgponce.data_objects.ReleasedPokemon;
@@ -36,6 +37,10 @@ public class GetBufferedData implements CommandRegistrationCallback {
                     string.append("------------------ onHatched Data ------------------\n");
                     for (PokemonHatched pokemonHatched : hatchedPokemonBuffer) {
                         string.append(pokemonHatched.toJson()).append("\n");
+                    }
+                    string.append("------------------ onBattle Data ------------------\n");
+                    for (BattleResult battleResult : battleResultsBuffer) {
+                        string.append(battleResult.toJson()).append("\n");
                     }
 
                     string.append("----------------------------------------------------\n");

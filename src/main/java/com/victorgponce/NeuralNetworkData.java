@@ -2,9 +2,7 @@ package com.victorgponce;
 
 import com.cobblemon.mod.common.api.events.CobblemonEvents;
 import com.victorgponce.commands.GetBufferedData;
-import com.victorgponce.events.OnEggHatched;
-import com.victorgponce.events.OnPokemonCaptured;
-import com.victorgponce.events.OnPokemonRelease;
+import com.victorgponce.events.*;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import org.slf4j.Logger;
@@ -21,6 +19,10 @@ public class NeuralNetworkData implements ModInitializer {
         CobblemonEvents.POKEMON_CAPTURED.subscribe(OnPokemonCaptured::onCapturedEvent);
         CobblemonEvents.POKEMON_RELEASED_EVENT_POST.subscribe(OnPokemonRelease::onReleasedEvent);
         CobblemonEvents.HATCH_EGG_POST.subscribe(OnEggHatched::onHatchedEvent);
+        CobblemonEvents.BATTLE_VICTORY.subscribe(OnBattleEnd::onVictory);
+        CobblemonEvents.BATTLE_FLED.subscribe(OnBattleEnd::onFlee);
+        CobblemonEvents.BATTLE_STARTED_POST.subscribe(OnBattleStarted::onBattleStarted);
+
 
         // Commands
         CommandRegistrationCallback.EVENT.register(new GetBufferedData());
