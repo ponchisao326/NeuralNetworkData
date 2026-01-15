@@ -1,20 +1,23 @@
 # CobbleAnalytics (ServerBrain)
 
-**CobbleAnalytics** is a high-performance, server-side telemetry agent designed for **Cobblemon** (Fabric 1.21.1).
+**CobbleAnalytics** is a high-performance, server-side telemetry agent designed for **Cobblemon** (Fabric 1.21.1 / Yarn Mappings).
 
 Unlike traditional loggers that output text files for human reading, CobbleAnalytics functions as a **Big Data ingestion pipeline**. It captures rich, contextual "Behavioral Data" in real-time, structuring it for Time-Series analysis and Machine Learning applications (Churn Prediction, Dynamic Difficulty, Economy Balancing).
 
 ## 🚀 Core Philosophy
 
-* **Context is King:** We don't just log `Player1 won a battle`. We capture `{Timestamp, Biome, Opponent_Type, MVP_Pokemon, HP_Remaining, Battle_Duration}`.
-* **Zero-Lag Policy:** All database I/O is handled by an asynchronous worker thread using `ConcurrentLinkedQueue` buffering. The server main thread never waits for the database.
-* **AI-Ready:** Data is stored in a Hybrid SQL/JSON format, allowing for rigorous indexing on standard metrics (Time, UUID) while preserving complex, unstructured game data (IVs, Movesets) in JSON for future Neural Network training.
+* **Context is King:** We don't just log `Player1 caught a Pokemon`. We capture `{Timestamp, Biome_Key, IV_Distribution, Dex_Completion_%, Ball_Used}`.
+* **Zero-Lag Policy:** NO database I/O occurs on the main server thread.
+* **Flow:** `Game Event` -> `Extract Data` -> `Immutable Record (DTO)` -> `ConcurrentLinkedQueue` -> `Async Writer Thread`.
+
+
+* **AI-Ready:** Data is stored in a Hybrid SQL/JSON format. We use **Java Records** with internal `Gson` serialization to store complex, unstructured game data (IVs, Movesets) in JSON, while indexing standard metrics (Time, UUID) in SQL.
 
 ---
 
 ## 🏗 Data Architecture
 
-The system utilizes a centralized **Fact Table** approach rather than fragmenting data across dozens of tables. This simplifies downstream analytics.
+The system utilizes a centralized **Fact Table** approach.
 
 ### Schema (MariaDB / MySQL)
 
@@ -27,7 +30,6 @@ CREATE TABLE dim_players (
     player_name VARCHAR(32),
     first_login TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_login TIMESTAMP,
-    total_playtime_seconds INT DEFAULT 0,
     -- Game Demographics
     favorite_starter VARCHAR(50), 
     team_affinity VARCHAR(50) -- FTB Teams integration
@@ -40,15 +42,15 @@ CREATE TABLE fact_game_events (
     player_uuid VARCHAR(36),
     
     -- High-Level Categorization for SQL Indexing
-    category VARCHAR(20),    -- e.g., 'ECONOMY', 'COMBAT', 'EXPLORATION'
-    action_type VARCHAR(50), -- e.g., 'POKEMON_CAUGHT', 'GTS_TRADE', 'RAID_FAIL'
+    category VARCHAR(20),    -- e.g., 'LIFECYCLE', 'COMBAT', 'ECONOMY'
+    action_type VARCHAR(50), -- e.g., 'POKEMON_CAUGHT', 'BATTLE_END'
     
     -- THE AI BRAIN: Unstructured Contextual Data
     context_data JSON, 
     
     -- Spatial Data for Heatmaps
     world VARCHAR(50),
-    biome VARCHAR(100),
+    biome VARCHAR(100), -- Stored as registry key (e.g., "minecraft:plains")
     pos_x INT,
     pos_y INT,
     pos_z INT,
@@ -64,37 +66,52 @@ CREATE TABLE fact_game_events (
 
 ## 📡 Data Dictionary (Sensors)
 
-The mod hooks into Fabric and Cobblemon events to capture the following "Sensors":
+The mod hooks into Fabric and Cobblemon events.
 
-### A. Cobblemon Core (`COBBLEMON_CORE`)
+### A. Pokemon Lifecycle (`POKEMON_LIFECYCLE`) [IMPLEMENTED]
 
-*Purpose: Train the AI to understand asset valuation and player collecting habits.*
+*Purpose: Train the AI to understand asset valuation, breeding habits, and player retention.*
 
 * **`POKEMON_CAUGHT`**
-* **Context Data:**
-* `pokemon_uuid`: (UUID)
+* **Trigger:** `PokemonCapturedEvent`
+* **Context Data (JSON):**
 * `species`: (String) e.g., "charmander"
-* `level`: (Int) e.g., 15
-* `nature`: (String) e.g., "adamant"
-* `ability`: (String) Hidden vs Standard
+* `level`: (Int)
 * `shiny`: (Boolean)
 * `ivs`: (Object) `{"hp": 31, "atk": 10, ...}`
-* `ball_used`: (String) Tracks resource usage (e.g., Masterball on Pidgey?)
-* `pokedex_completion`: (Int) % at moment of capture.
-* `timestamp`: (Long) Tracks when the Pokemon is captured
+* `ball_used`: (String) Tracks resource usage vs asset value.
+* `dex_completion`: (Float) National Dex % at the exact moment of capture.
+* `location`: (Object) XYZ coordinates.
 
 
 
 
 * **`POKEMON_RELEASED`**
+* **Trigger:** `ReleasePokemonEvent`
+* **Context Data (JSON):**
+* `species`: (String)
+* `shiny`: (Boolean)
+* `capture_timestamp`: (Long) Used by SQL/Dashboard to calculate "Time Held" (Retention).
+* `biome`: (String) Extracted via `world.getBiome(pos).getKey()` for precise mapping.
 
 
-* **`EGG_HATCHED`**
-* **Context Data:** `cycles_needed`, `parents_species`, `shiny_charm_active`.
+
+
+* **`POKEMON_HATCHED`**
+* **Trigger:** `PokemonHatchedEvent`
+* **Logic Note:** Cobblemon strips parent NBT on egg creation. We cannot track lineage directly.
+* **Strategy:** **"Genetic Result Analysis"**. We infer intent by analyzing the output.
+* **Context Data (JSON):**
+* `species`: (String)
+* `iv_sum`: (Int) Total IV stats (High IVs + Specific Biome = Intentional Breeding).
+* `shiny`: (Boolean)
+* `location`: (Object) Used to detect "Hatching loops/paths".
 
 
 
-### B. Combat Analytics (`COMBAT_ANALYTICS`)
+
+
+### B. Combat Analytics (`COMBAT_ANALYTICS`) [PLANNED]
 
 *Purpose: Balance PvE/Raids and auto-adjust difficulty curves.*
 
@@ -114,16 +131,16 @@ The mod hooks into Fabric and Cobblemon events to capture the following "Sensors
 
 
 
-### C. Economy Flow (`ECONOMY_FLOW`)
+### C. Economy & Player (`ECONOMY_FLOW` / `PLAYER_SESSION`) [PLANNED]
 
-*Purpose: Monitor inflation and market health.*
+*Purpose: Monitor inflation, market health, and "Rage Quits".*
 
 * **`GTS_TRADE`** (Integration with GTS mods)
 * **Context Data:** `item_sold`, `price`, `time_on_market`.
 
 
-* **`SHOP_TRANSACTION`**
-* Tracks NPC interactions and currency sinks.
+* **`SESSION_END`**
+* **Context Data:** `duration`, `quit_reason` (Detects if quit happened immediately after a Battle Loss).
 
 
 
@@ -133,14 +150,16 @@ The mod hooks into Fabric and Cobblemon events to capture the following "Sensors
 
 * **Language:** Java 21
 * **Loader:** Fabric Loader
+* **Mappings:** Yarn
 * **Database:** MariaDB / MySQL 8.0+
-* **Driver:** `mysql-connector-j` (9.1.0)
+* **Serialization:** Java Records + Static Gson
 * **Connection Pooling:** HikariCP (Optimized for high-concurrency inserts)
 
 ## 🔧 Configuration
 
 1. Drop the jar into `/mods`.
 2. Configure database credentials in `config/cobbleanalytics.json`:
+
 ```json
 {
   "database": {
@@ -153,4 +172,5 @@ The mod hooks into Fabric and Cobblemon events to capture the following "Sensors
     "flush_interval_seconds": 10
   }
 }
+
 ```
