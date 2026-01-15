@@ -23,9 +23,12 @@ public class NeuralNetworkData implements ModInitializer {
         CobblemonEvents.BATTLE_FLED.subscribe(OnBattleEnd::onFlee);
         CobblemonEvents.BATTLE_STARTED_POST.subscribe(OnBattleStarted::onBattleStarted);
 
-
         // Commands
         CommandRegistrationCallback.EVENT.register(new GetBufferedData());
+
+        // Damage Register
+        OnBattleDamage.register();
+        OnPlayerLogin.register();
     }
 
 }

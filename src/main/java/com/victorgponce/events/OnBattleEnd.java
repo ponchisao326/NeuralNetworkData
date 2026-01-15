@@ -129,7 +129,10 @@ public class OnBattleEnd {
                 currentTimestamp
         );
 
+        OnRaidInteraction.checkAndStore(battle, playerActor, result, durationMs, biome);
         battleResultsBuffer.add(data);
+
+        PokemonData.finishedBattleTimestamps.put(battle.getBattleId(), System.currentTimeMillis());
 
         System.out.println("BigData Battle: " + result + " vs " + opponentType + " (Duration: " + (durationMs/1000) + "s)");
     }
