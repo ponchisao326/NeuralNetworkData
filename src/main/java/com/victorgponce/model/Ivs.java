@@ -1,4 +1,4 @@
-package com.victorgponce.data_objects;
+package com.victorgponce.model;
 
 public record Ivs(int PS_IV, int ATTACK_IV, int DEFENCE_IV, int SP_ATTACK_IV, int SP_DEFENSE_IV, int SPEED_IV) {
     public int getTotalIvs() {

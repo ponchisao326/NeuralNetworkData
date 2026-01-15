@@ -2,7 +2,7 @@ package com.victorgponce.utils;
 
 import com.cobblemon.mod.common.api.pokemon.stats.Stats;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.victorgponce.data_objects.Ivs;
+import com.victorgponce.model.Ivs;
 
 public class DataUtils {
 

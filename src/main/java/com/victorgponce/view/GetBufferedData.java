@@ -1,19 +1,14 @@
-package com.victorgponce.commands;
+package com.victorgponce.view;
 
 import com.mojang.brigadier.CommandDispatcher;
-import com.victorgponce.data_objects.BattleResult;
-import com.victorgponce.data_objects.CaughtPokemon;
-import com.victorgponce.data_objects.PokemonHatched;
-import com.victorgponce.data_objects.ReleasedPokemon;
-import com.victorgponce.data_objects.RaidInteraction; // [NUEVO IMPORT]
+import com.victorgponce.model.*;
+import com.victorgponce.repository.DataRepository;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
-
-import static com.victorgponce.cache.PokemonData.*;
 
 public class GetBufferedData implements CommandRegistrationCallback {
 
@@ -25,30 +20,23 @@ public class GetBufferedData implements CommandRegistrationCallback {
                     ServerPlayerEntity player = context.getSource().getPlayer();
                     if (player == null) return 0;
 
+                    DataRepository repo = DataRepository.getInstance();
                     StringBuilder string = new StringBuilder();
 
                     string.append("------------------ onCaptured Data ------------------\n");
-                    for (CaughtPokemon caughtPokemon : caughtPokemonBuffer) {
-                        string.append(caughtPokemon.toJson()).append("\n");
-                    }
-                    string.append("------------------ onReleased Data ------------------\n");
-                    for (ReleasedPokemon releasedPokemon : releasedPokemonBuffer) {
-                        string.append(releasedPokemon.toJson()).append("\n");
-                    }
-                    string.append("------------------ onHatched Data ------------------\n");
-                    for (PokemonHatched pokemonHatched : hatchedPokemonBuffer) {
-                        string.append(pokemonHatched.toJson()).append("\n");
-                    }
-                    string.append("------------------ onBattle Data ------------------\n");
-                    for (BattleResult battleResult : battleResultsBuffer) {
-                        string.append(battleResult.toJson()).append("\n");
-                    }
+                    for (CaughtPokemon d : repo.getCaughtBuffer()) string.append(d.toJson()).append("\n");
 
-                    // --- SECCIÓN NUEVA: RAIDS ---
+                    string.append("------------------ onReleased Data ------------------\n");
+                    for (ReleasedPokemon d : repo.getReleasedBuffer()) string.append(d.toJson()).append("\n");
+
+                    string.append("------------------ onHatched Data ------------------\n");
+                    for (PokemonHatched d : repo.getHatchedBuffer()) string.append(d.toJson()).append("\n");
+
+                    string.append("------------------ onBattle Data ------------------\n");
+                    for (BattleResult d : repo.getBattleResultBuffer()) string.append(d.toJson()).append("\n");
+
                     string.append("------------------ onRaid Data ------------------\n");
-                    for (RaidInteraction raidInteraction : raidBuffer) {
-                        string.append(raidInteraction.toJson()).append("\n");
-                    }
+                    for (RaidInteraction d : repo.getRaidBuffer()) string.append(d.toJson()).append("\n");
 
                     string.append("----------------------------------------------------\n");
 

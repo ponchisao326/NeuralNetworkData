@@ -1,8 +1,8 @@
-package com.victorgponce.events;
+package com.victorgponce.controller;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.victorgponce.cache.PokemonData;
-import com.victorgponce.data_objects.RaidMetadata;
+import com.victorgponce.model.RaidMetadata;
+import com.victorgponce.repository.DataRepository;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -10,12 +10,11 @@ import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class OnBattleDamage {
+public class DamageTrackerController {
 
     public static void register() {
-        ServerLivingEntityEvents.AFTER_DAMAGE.register(OnBattleDamage::onEntityDamage);
+        ServerLivingEntityEvents.AFTER_DAMAGE.register(DamageTrackerController::onEntityDamage);
     }
 
     private static void onEntityDamage(LivingEntity entity, DamageSource source, float baseDamage, float damageTaken, boolean blocked) {
@@ -35,11 +34,12 @@ public class OnBattleDamage {
 
         // Obtain or recover Battle ID
         UUID battleId = pokemonEntity.getBattleId();
+        DataRepository repository = DataRepository.getInstance();
 
-        // B Plan: Recover by UUID id battleID is null (Raids common bug)
+        // B Plan: Recover by UUID if battleID is null (Raids common bug)
         if (battleId == null) {
             UUID entityUuid = entity.getUuid();
-            for (Map.Entry<UUID, RaidMetadata> entry : PokemonData.raidMetadataCache.entrySet()) {
+            for (Map.Entry<UUID, RaidMetadata> entry : repository.getRaidMetadataMap().entrySet()) {
                 if (entry.getValue().bossUuid().equals(entityUuid)) {
                     battleId = entry.getKey();
                     break;
@@ -47,10 +47,9 @@ public class OnBattleDamage {
             }
         }
 
-        // Just add damage
+        // Log via Repository directly (optimized for high frequency events)
         if (battleId != null) {
-            PokemonData.battleDamageTracker.putIfAbsent(battleId, new ConcurrentHashMap<>());
-            PokemonData.battleDamageTracker.get(battleId).merge(playerUuid, damageTaken, Float::sum);
+            repository.logDamage(battleId, playerUuid, damageTaken);
         }
     }
 }

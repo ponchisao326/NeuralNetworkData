@@ -1,4 +1,4 @@
-package com.victorgponce.data_objects;
+package com.victorgponce.model;
 
 import java.util.UUID;
 

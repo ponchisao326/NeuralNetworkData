@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.modCompileOnlyApi
+
 plugins {
     id("java")
     id("dev.architectury.loom") version("1.11-SNAPSHOT")
@@ -48,6 +50,8 @@ dependencies {
 
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+
+    modCompileOnlyApi(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
 }
 
 tasks.getByName<Test>("test") {

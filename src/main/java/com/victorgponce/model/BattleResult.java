@@ -1,8 +1,6 @@
-package com.victorgponce.data_objects;
+package com.victorgponce.model;
 
 import com.google.gson.Gson;
-import java.util.UUID;
-import java.util.List;
 
 public record BattleResult(
         String battleId,        // Battle UUID
