@@ -27,13 +27,13 @@ loom {
             client()
             configName = "Minecraft Client"
             ideConfigGenerated(true)
-            runDir("run_client") // El cliente se queda en la carpeta 'run' normal
+            runDir("run_client") // El cliente se queda en la carpeta 'run_client'
         }
         named("server") {
             server()
             configName = "Minecraft Server"
             ideConfigGenerated(true)
-            runDir("run") // El servidor usará una carpeta nueva llamada 'run_server'
+            runDir("run") // El servidor usará la carpeta 'run' antigua que contiene los datos previos
         }
     }
 }
