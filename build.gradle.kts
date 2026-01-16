@@ -21,6 +21,21 @@ loom {
     mixin {
         defaultRefmapName.set("mixins.${project.name}.refmap.json")
     }
+
+    runs {
+        named("client") {
+            client()
+            configName = "Minecraft Client"
+            ideConfigGenerated(true)
+            runDir("run_client") // El cliente se queda en la carpeta 'run' normal
+        }
+        named("server") {
+            server()
+            configName = "Minecraft Server"
+            ideConfigGenerated(true)
+            runDir("run") // El servidor usará una carpeta nueva llamada 'run_server'
+        }
+    }
 }
 
 repositories {
