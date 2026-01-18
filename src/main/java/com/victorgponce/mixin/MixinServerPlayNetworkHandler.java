@@ -25,7 +25,6 @@ public class MixinServerPlayNetworkHandler {
     private void onCommandExecution(CommandExecutionC2SPacket packet, CallbackInfo ci) {
         // Extract command directly from the network packet
         String command = packet.command();
-        LOGGER.info("Info command from NeuralNetworkData: {}", command);
 
         // Ignore view data command
         if (command.startsWith("cobbleneuraldata")) return;
