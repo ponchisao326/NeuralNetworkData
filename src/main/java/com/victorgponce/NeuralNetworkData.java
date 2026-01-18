@@ -19,9 +19,10 @@ public class NeuralNetworkData implements ModInitializer {
         PokemonLifecycleController.register();
         BattleController.register();
         RaidController.register();
-        SessionController.register();
         DamageTrackerController.register();
         EconomyController.register();
+        SessionController.register();
+        SessionHeartbeatController.register();
 
         // Register Commands
         CommandRegistrationCallback.EVENT.register(new GetBufferedData());

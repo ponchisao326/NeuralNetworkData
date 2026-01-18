@@ -10,7 +10,14 @@ public class SessionController {
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+            // Generate last snapshot
+            TelemetryFacade.getInstance().processSnapshot(handler.getPlayer());
+
+            // Register LogOut Event
             TelemetryFacade.getInstance().processSession(handler.getPlayer(), "LOGOUT");
+
+            // Clean tracker memory
+            TelemetryFacade.getInstance().cleanupPlayer(handler.getPlayer());
         });
     }
 }

@@ -14,16 +14,14 @@ import com.victorgponce.utils.DataUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.Stats;
 import org.pokesplash.gts.Gts;
 import org.pokesplash.gts.Listing.ItemListing;
 import org.pokesplash.gts.Listing.Listing;
 import org.pokesplash.gts.Listing.PokemonListing;
 import org.pokesplash.gts.api.event.events.PurchaseEvent;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.victorgponce.NeuralNetworkData.LOGGER;
 
@@ -391,5 +389,47 @@ public class TelemetryFacade {
 
         repository.addGtsTransaction(data);
         LOGGER.info("BigData ECONOMY: Sold {} for {}", description, price);
+    }
+
+    // --- Session Snapshot Logic ---
+
+    public void trackPlayerState(ServerPlayerEntity player) {
+        // Obtain current biome
+        String currentBiome = player.getWorld().getBiome(player.getBlockPos())
+                .getKey().map(k -> k.getValue().toString()).orElse("unknown");
+
+        // Save
+        repository.trackBiome(player.getUuid(), currentBiome);
+    }
+
+    public void processSnapshot(ServerPlayerEntity player) {
+        long now = System.currentTimeMillis();
+
+        // Obtain distances
+        // Note: Walk_one_cm includes walking. Sprint and Fly are separate.
+        long walked = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.WALK_ONE_CM));
+        long sprinted = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.SPRINT_ONE_CM));
+        long flown = player.getStatHandler().getStat(Stats.CUSTOM.getOrCreateStat(Stats.FLY_ONE_CM)); // Si vuelan en creativo/pokemon
+        long total = walked + sprinted + flown;
+
+        // Retrieve and clean visited biomes in the last 5 minutes
+        Set<String> biomes = repository.popVisitedBiomes(player.getUuid());
+
+        // Create snapshot
+        SessionSnapshot snapshot = new SessionSnapshot(
+                player.getUuidAsString(),
+                walked,
+                sprinted,
+                flown,
+                total,
+                new ArrayList<>(biomes), // Conver Set to List
+                now
+        );
+
+        repository.addSessionSnapshot(snapshot);
+    }
+
+    public void cleanupPlayer(ServerPlayerEntity player) {
+        repository.clearTracker(player.getUuid());
     }
 }
