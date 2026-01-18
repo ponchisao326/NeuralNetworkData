@@ -46,6 +46,13 @@ public class GetBufferedData implements CommandRegistrationCallback {
 
                     string.append("------------------ Session Snapshots (5min) ------------------\n");
                     for (SessionSnapshot d : repo.getSnapshotBuffer()) string.append(d.toJson()).append("\n");
+                    string.append("------------------ Command Usage ------------------\n");
+                    for (CommandUsage d : repo.getCommandBuffer()) string.append(d.toJson()).append("\n");
+
+                    string.append("------------------ Player Deaths ------------------\n");
+                    for (PlayerDeath d : repo.getDeathBuffer()) string.append(d.toJson()).append("\n");
+
+                    string.append("----------------------------------------------------\n");
 
                     player.sendMessage(Text.literal(string.toString()));
                     return 1;

@@ -15,6 +15,9 @@
       "com.victorgponce.NeuralNetworkData"
     ]
   },
+  "mixins": [
+    "neuralnetworkdata.mixins.json"
+  ],
   "depends": {
     "minecraft": "1.21.1",
     "cobblemon": ">=1.7.0"

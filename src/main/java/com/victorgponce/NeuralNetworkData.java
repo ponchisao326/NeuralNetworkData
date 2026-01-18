@@ -23,6 +23,7 @@ public class NeuralNetworkData implements ModInitializer {
         EconomyController.register();
         SessionController.register();
         SessionHeartbeatController.register();
+        BehaviorController.register();
 
         // Register Commands
         CommandRegistrationCallback.EVENT.register(new GetBufferedData());

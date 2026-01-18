@@ -12,6 +12,7 @@ import com.victorgponce.repository.DataRepository;
 import com.victorgponce.utils.BigDataUtils;
 import com.victorgponce.utils.DataUtils;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.Stats;
@@ -427,6 +428,35 @@ public class TelemetryFacade {
         );
 
         repository.addSessionSnapshot(snapshot);
+    }
+
+    // --- Command Logic ---
+    public void processCommand(ServerPlayerEntity player, String command, boolean success) {
+        String rootCommand = command.split(" ")[0];
+
+        CommandUsage data = new CommandUsage(
+                player.getUuidAsString(),
+                rootCommand,
+                success,
+                System.currentTimeMillis()
+        );
+        repository.addCommandUsage(data);
+    }
+
+    // --- Death Logic ---
+    public void processDeath(ServerPlayerEntity player, DamageSource source) {
+        String cause = source.getName(); // Ej: "lava", "mob"
+        String biome = player.getWorld().getBiome(player.getBlockPos())
+                .getKey().map(k -> k.getValue().toString()).orElse("unknown");
+
+        PlayerDeath data = new PlayerDeath(
+                player.getUuidAsString(),
+                cause,
+                player.experienceLevel,
+                biome,
+                System.currentTimeMillis()
+        );
+        repository.addPlayerDeath(data);
     }
 
     public void cleanupPlayer(ServerPlayerEntity player) {
