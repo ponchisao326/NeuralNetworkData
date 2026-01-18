@@ -14,17 +14,5 @@ public class BehaviorController {
                 TelemetryFacade.getInstance().processDeath(player, source);
             }
         });
-
-        // Command Listener (Use ServerMessageEvents to listen for chat commands)
-        ServerMessageEvents.ALLOW_COMMAND_MESSAGE.register((message, source, params) -> {
-            if (source.isExecutedByPlayer()) {
-                TelemetryFacade.getInstance().processCommand(
-                        source.getPlayer(),
-                        message.getContent().getString(),
-                        true // Assume success
-                );
-            }
-            return true; // Allow command
-        });
     }
 }
