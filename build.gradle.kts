@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.victorgponce"
-version = "1.0"
+version = "1.1"
 
 architectury {
     platformSetupLoomIde()
