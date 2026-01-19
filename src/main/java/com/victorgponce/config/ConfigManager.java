@@ -16,19 +16,19 @@ public class ConfigManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final File CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve("neuralnetworkdata.json").toFile();
 
-    private static ModConfig instance;
+    private static NeuralNetworkConfig instance;
 
     public static void load() {
         if (CONFIG_FILE.exists()) {
             try (FileReader reader = new FileReader(CONFIG_FILE)) {
-                instance = GSON.fromJson(reader, ModConfig.class);
+                instance = GSON.fromJson(reader, NeuralNetworkConfig.class);
                 LOGGER.info("Config loaded correctly");
             } catch (IOException e) {
                 LOGGER.error("Error while loading configuration, using default values.", e);
-                instance = new ModConfig();
+                instance = new NeuralNetworkConfig();
             }
         } else {
-            instance = new ModConfig();
+            instance = new NeuralNetworkConfig();
             save();
         }
     }
@@ -43,7 +43,7 @@ public class ConfigManager {
         }
     }
 
-    public static ModConfig get() {
+    public static NeuralNetworkConfig get() {
         if (instance == null) load();
         return instance;
     }

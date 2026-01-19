@@ -1,6 +1,6 @@
 package com.victorgponce.config;
 
-public class ModConfig {
+public class NeuralNetworkConfig {
     // --- API Configuration ---
     // URL where Node.js server will be listening (http://yourdomain.com:3000/api/ingest)
     public String apiUrl = "http://localhost:3000/api/ingest";
@@ -11,7 +11,7 @@ public class ModConfig {
     // --- Performance ---
     public int batchIntervalSeconds = 10; // How often to send data
     public boolean debugMode = true; // Show console logs
-    public ModConfig() {
+    public NeuralNetworkConfig() {
         System.out.println("--- CARGANDO MODCONFIG CORRECTAMENTE ---");
     }
 }
