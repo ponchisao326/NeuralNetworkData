@@ -58,6 +58,7 @@ public class TelemetryFacade {
         float dexPercentage = BigDataUtils.getNationalDexPercentage(player);
 
         CaughtPokemon data = new CaughtPokemon(
+                player != null ? player.getUuidAsString() : "unknown",
                 pokemonCaptured.getUuid(),
                 pokemonCaptured.getSpecies().getName(),
                 level,

@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import java.util.UUID;
 
 public record CaughtPokemon(
+        String playerUUID,
         UUID pokemonUuid,
         String species,
         int level,

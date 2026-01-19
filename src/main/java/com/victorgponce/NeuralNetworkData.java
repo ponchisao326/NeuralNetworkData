@@ -1,9 +1,12 @@
 package com.victorgponce;
 
+import com.victorgponce.config.ConfigManager;
 import com.victorgponce.controller.*;
+import com.victorgponce.database.AsyncDataWriter;
 import com.victorgponce.view.GetBufferedData;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,6 +17,11 @@ public class NeuralNetworkData implements ModInitializer {
     @Override
     public void onInitialize() {
         LOGGER.info("Starting Neural Network Data");
+
+        // Load Config
+        ConfigManager.load();
+
+        AsyncDataWriter.start();
 
         // Register Controllers
         PokemonLifecycleController.register();
@@ -27,5 +35,11 @@ public class NeuralNetworkData implements ModInitializer {
 
         // Register Commands
         CommandRegistrationCallback.EVENT.register(new GetBufferedData());
+
+        // Shutdown Hook (Save data on server shutdown)
+        ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
+            LOGGER.info("Shutting down NeuralNetworkData. Sending data to API...");
+            AsyncDataWriter.stop();
+        });
     }
 }

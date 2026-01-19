@@ -161,22 +161,4 @@ public class DataRepository {
         }
         return false;
     }
-
-    /**
-     * Cleanup battle data finished after 2 minutes.
-     */
-    public void cleanUpStaleData() {
-        long now = System.currentTimeMillis();
-        long expirationTime = 120000; // 2 minutes margin
-
-        finishedBattleTimestamps.forEach((battleId, endTime) -> {
-            if (now - endTime > expirationTime) {
-                battleDamageTracker.remove(battleId);
-                battleStartTimestamps.remove(battleId);
-                raidMetadataCache.remove(battleId);
-                finishedBattleTimestamps.remove(battleId);
-                LOGGER.info("Limpieza de Memoria: Batalla {} eliminada.", battleId);
-            }
-        });
-    }
 }
