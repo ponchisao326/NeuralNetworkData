@@ -6,6 +6,7 @@ public record PlayerDeath(
         String playerUuid,
         String cause,        // Ej: "lava", "zombie", "fall"
         int level,           // XP Level
+        String world,        // Where did the player die
         String biome,        // Where did the player die
         long timestamp
 ) {

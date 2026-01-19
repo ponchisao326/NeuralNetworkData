@@ -44,6 +44,17 @@ public class TelemetryFacade {
         return INSTANCE;
     }
 
+    private String getWorldName(ServerPlayerEntity player) {
+        if (player == null) return "unknown";
+        return player.getWorld().getRegistryKey().getValue().toString(); // Ej: minecraft:overworld, minecraft:the_nether
+    }
+
+    private String getBiomeName(ServerPlayerEntity player) {
+        if (player == null) return "unknown";
+        return player.getWorld().getBiome(player.getBlockPos())
+                .getKey().map(k -> k.getValue().toString()).orElse("unknown");
+    }
+
     // --- Lifecycle Logic ---
 
     public void processCapture(Pokemon pokemonCaptured, ServerPlayerEntity player) {
@@ -67,6 +78,8 @@ public class TelemetryFacade {
                 shiny,
                 ivs,
                 ballUsed,
+                getBiomeName(player),
+                getWorldName(player),
                 dexPercentage,
                 currentTimestamp
         );
@@ -100,6 +113,7 @@ public class TelemetryFacade {
                 ivs,
                 playerName,
                 biome,
+                getWorldName(player),
                 playerUuid,
                 currentTimestamp,
                 0
@@ -127,6 +141,7 @@ public class TelemetryFacade {
                 pokemon.getNature().getName().getPath(),
                 pokemon.getCaughtBall().getName().getPath(),
                 player != null ? player.getUuidAsString() : "unknown",
+                getWorldName(player),
                 biome,
                 currentTimestamp
         );
@@ -235,6 +250,7 @@ public class TelemetryFacade {
                 faintedCount,
                 teamSnapshot.toString(),
                 biome,
+                getWorldName(playerEntity),
                 currentTimestamp
         );
 
@@ -317,6 +333,7 @@ public class TelemetryFacade {
                 participants,
                 damage,
                 biome,
+                getWorldName(eventPlayer),
                 System.currentTimeMillis()
         );
 
@@ -424,6 +441,7 @@ public class TelemetryFacade {
                 sprinted,
                 flown,
                 total,
+                getWorldName(player),
                 new ArrayList<>(biomes), // Conver Set to List
                 now
         );
@@ -434,9 +452,13 @@ public class TelemetryFacade {
     // --- Command Logic ---
     public void processCommand(ServerPlayerEntity player, String command, boolean success) {
         String rootCommand = command.split(" ")[0];
+        String biome = player.getWorld().getBiome(player.getBlockPos())
+                .getKey().map(k -> k.getValue().toString()).orElse("unknown");
 
         CommandUsage data = new CommandUsage(
                 player.getUuidAsString(),
+                biome,
+                getWorldName(player),
                 rootCommand,
                 success,
                 System.currentTimeMillis()
@@ -454,6 +476,7 @@ public class TelemetryFacade {
                 player.getUuidAsString(),
                 cause,
                 player.experienceLevel,
+                getWorldName(player),
                 biome,
                 System.currentTimeMillis()
         );

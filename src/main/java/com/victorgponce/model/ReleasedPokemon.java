@@ -12,6 +12,7 @@ public record ReleasedPokemon(
         Ivs ivs,
         String playerName,
         String biome,
+        String world,
         String playerUuid,
         long timestamp,
         long timeHeldCalculated

@@ -11,6 +11,7 @@ public record BattleResult(
         int faintedCount,       // How many fainted Pokémon
         String teamStatusJson,  // Save a mini-json with the team status (HP, etc)
         String biome,
+        String world,
         long timestamp
 ) {
     private static final Gson gson = new Gson();

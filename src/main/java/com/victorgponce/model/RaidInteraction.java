@@ -10,6 +10,7 @@ public record RaidInteraction(
         String result,
         int participantsCount,
         float damageDealt,
+        String world,
         String biome,
         long timestamp
 ) {

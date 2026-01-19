@@ -1,6 +1,7 @@
 package com.victorgponce.database;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.victorgponce.config.ConfigManager;
 import com.victorgponce.model.*;
@@ -93,13 +94,13 @@ public class AsyncDataWriter {
             T item = queue.poll();
 
             // Convert the record into a JSON tree
-            com.google.gson.JsonElement jsonContext = gson.toJsonTree(item);
+            JsonElement jsonContext = gson.toJsonTree(item);
             JsonObject contextObj = jsonContext.getAsJsonObject();
 
             // Extract key metadata from the context object
             String uuid = extractUuid(contextObj);
             String biome = contextObj.has("biome") ? contextObj.get("biome").getAsString() : "unknown";
-            String world = "overworld";
+            String world = contextObj.has("world") ? contextObj.get("world").getAsString() : "minecraft:overworld";
 
             String finalAction = actionOverride;
             if (actionOverride.equals("SESSION_EVENT") && contextObj.has("eventType")) {

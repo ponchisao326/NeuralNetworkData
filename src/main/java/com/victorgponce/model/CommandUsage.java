@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 
 public record CommandUsage(
         String playerUuid,
+        String biome,
+        String world,
         String command, // Ej: "home", "gts sell", "rtp"
         boolean isSuccess, // if command worked or not
         long timestamp

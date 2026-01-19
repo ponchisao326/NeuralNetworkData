@@ -26,6 +26,7 @@ public class MixinServerPlayNetworkHandler {
         // Extract command directly from the network packet
         String command = packet.command();
 
+
         // Ignore view data command
         if (command.startsWith("cobbleneuraldata")) return;
 

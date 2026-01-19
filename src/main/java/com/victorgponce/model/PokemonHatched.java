@@ -13,6 +13,7 @@ public record PokemonHatched(
         String nature,
         String ballInherited, // Collection data
         String playerUuid,
+        String world,
         String biome,
         long timestamp
 ) {

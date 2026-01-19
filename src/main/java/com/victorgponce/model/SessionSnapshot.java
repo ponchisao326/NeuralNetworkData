@@ -9,8 +9,9 @@ public record SessionSnapshot(
         long totalSprintedCm,
         long totalFlownCm,
         long totalDistanceCm, // before's sum
+        String world,
         List<String> recentBiomes, // Visited Biomes till last Snapshot
-                long timestamp
+        long timestamp
 ) {
     private static final Gson gson = new Gson();
 

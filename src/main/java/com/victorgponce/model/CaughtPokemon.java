@@ -14,6 +14,8 @@ public record CaughtPokemon(
         boolean shiny,
         Ivs ivs,
         String ballUsed,
+        String biome,
+        String world,
         float pokedexCompletion,
         long timestamp
 ) {
