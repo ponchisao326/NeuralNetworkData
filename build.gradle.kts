@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.victorgponce"
-version = "1.1"
+version = "1.1.0"
 
 architectury {
     platformSetupLoomIde()
@@ -53,7 +53,7 @@ repositories {
 dependencies {
     minecraft("net.minecraft:minecraft:1.21.1")
     mappings("net.fabricmc:yarn:1.21.1+build.3:v2")
-    modImplementation("net.fabricmc:fabric-loader:0.17.2")
+    modImplementation("net.fabricmc:fabric-loader:0.17.3")
 
     modImplementation("net.fabricmc.fabric-api:fabric-api:0.116.6+1.21.1")
     modImplementation(fabricApi.module("fabric-command-api-v2", "0.116.6+1.21.1"))

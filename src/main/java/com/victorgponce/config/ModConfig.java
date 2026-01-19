@@ -11,4 +11,7 @@ public class ModConfig {
     // --- Performance ---
     public int batchIntervalSeconds = 10; // How often to send data
     public boolean debugMode = true; // Show console logs
+    public ModConfig() {
+        System.out.println("--- CARGANDO MODCONFIG CORRECTAMENTE ---");
+    }
 }

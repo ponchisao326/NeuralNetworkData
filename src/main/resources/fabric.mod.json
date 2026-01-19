@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "cobblemon_fabric_mdk",
+  "id": "neuralnetworkdata",
   "version": "${version}",
   "name": "Neural Network Data",
   "description": "A data grabber for training neural networks",
