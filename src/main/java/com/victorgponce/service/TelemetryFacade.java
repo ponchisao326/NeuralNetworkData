@@ -8,10 +8,12 @@ import com.victorgponce.model.*;
 import com.victorgponce.repository.DataRepository;
 import com.victorgponce.service.processor.*;
 import com.victorgponce.utils.TelemetryUtils;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.pokesplash.gts.api.event.events.PurchaseEvent;
 
+import java.util.List;
 import java.util.UUID;
 
 public class TelemetryFacade {
@@ -53,9 +55,16 @@ public class TelemetryFacade {
         repository.addReleased(data);
     }
 
-    public void processHatch(Pokemon pokemon, ServerPlayerEntity player) {
-        PokemonHatched data = pokemonProcessor.createHatched(pokemon, player);
-        repository.addHatched(data);
+    public void scanInventoryForEggs(ServerPlayerEntity player) {
+        // 1. Mandamos al esclavo a buscar huevos
+        List<PokemonBred> newEggs = pokemonProcessor.createScanInventoryForEggs(player);
+
+        // 2. Si trajo algo, el Facade lo inserta en el Repo
+        if (newEggs != null && !newEggs.isEmpty()) {
+            for (PokemonBred egg : newEggs) {
+                repository.addBred(egg);
+            }
+        }
     }
 
     // --- Session Logic ---

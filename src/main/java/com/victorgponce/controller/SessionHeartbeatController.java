@@ -25,6 +25,8 @@ public class SessionHeartbeatController {
                     if (com.victorgponce.repository.DataRepository.getInstance().shouldTriggerSnapshot(player.getUuid())) {
                         facade.processSnapshot(player);
                     }
+
+                    facade.scanInventoryForEggs(player);
                 }
             }
         });

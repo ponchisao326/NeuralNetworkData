@@ -13,9 +13,5 @@ public class PokemonLifecycleController {
         CobblemonEvents.POKEMON_RELEASED_EVENT_POST.subscribe(event ->
                 TelemetryFacade.getInstance().processRelease(event.getPokemon(), event.getPlayer())
         );
-
-        CobblemonEvents.HATCH_EGG_POST.subscribe(event ->
-                TelemetryFacade.getInstance().processHatch(event.getPokemon(), event.getPlayer())
-        );
     }
 }

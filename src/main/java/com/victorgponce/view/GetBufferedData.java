@@ -30,7 +30,7 @@ public class GetBufferedData implements CommandRegistrationCallback {
                     for (ReleasedPokemon d : repo.getReleasedBuffer()) string.append(d.toJson()).append("\n");
 
                     string.append("------------------ onHatched Data ------------------\n");
-                    for (PokemonHatched d : repo.getHatchedBuffer()) string.append(d.toJson()).append("\n");
+                    for (PokemonBred d : repo.getBredBuffer()) string.append(d.toJson()).append("\n");
 
                     string.append("------------------ onBattle Data ------------------\n");
                     for (BattleResult d : repo.getBattleResultBuffer()) string.append(d.toJson()).append("\n");

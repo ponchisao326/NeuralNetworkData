@@ -8,6 +8,8 @@ public class NeuralNetworkConfig {
     // Security Key to prevent anyone from sending false data to your API
     public String apiKey = "CAMBIA_ESTO_POR_UNA_CLAVE_SEGURA_123";
 
+    public String serverId = "server_default";
+
     // --- Performance ---
     public int batchIntervalSeconds = 10; // How often to send data
     public boolean debugMode = true; // Show console logs

@@ -2,16 +2,14 @@ package com.victorgponce.model;
 
 import com.google.gson.Gson;
 
-import java.util.UUID;
-
-public record PokemonHatched(
-        UUID pokemonUuid,
+public record PokemonBred(
+        String pokemonUuid,
         String species,
-        boolean shiny,
+        boolean isShiny,
         Ivs ivs,
         String ability,
         String nature,
-        String ballInherited, // Collection data
+        String ballUsed,
         String playerUuid,
         String world,
         String biome,
@@ -19,6 +17,9 @@ public record PokemonHatched(
 ) {
     private static final Gson gson = new Gson();
 
+    /**
+     * Parse record to JSON
+     */
     public String toJson() {
         return gson.toJson(this);
     }

@@ -4,6 +4,7 @@ import com.victorgponce.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -23,11 +24,13 @@ public class DataRepository {
     // Buffers for output
     private final ConcurrentLinkedQueue<CaughtPokemon> caughtPokemonBuffer = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<ReleasedPokemon> releasedPokemonBuffer = new ConcurrentLinkedQueue<>();
-    private final ConcurrentLinkedQueue<PokemonHatched> hatchedPokemonBuffer = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<PokemonBred> bredBuffer = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<BattleResult> battleResultsBuffer = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<PlayerSession> sessionBuffer = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<RaidInteraction> raidBuffer = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<SessionSnapshot> snapshotBuffer = new ConcurrentLinkedQueue<>();
+    private final Set<String> processedEggUuids = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<UUID> processedItemEntities = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private final ConcurrentLinkedQueue<GtsTransaction> gtsBuffer = new ConcurrentLinkedQueue<>();
 
@@ -53,7 +56,7 @@ public class DataRepository {
     // --- Getters for Buffers (Read-Only access usually, but Queue is mutable) ---
     public ConcurrentLinkedQueue<CaughtPokemon> getCaughtBuffer() { return caughtPokemonBuffer; }
     public ConcurrentLinkedQueue<ReleasedPokemon> getReleasedBuffer() { return releasedPokemonBuffer; }
-    public ConcurrentLinkedQueue<PokemonHatched> getHatchedBuffer() { return hatchedPokemonBuffer; }
+    public ConcurrentLinkedQueue<PokemonBred> getBredBuffer() {return bredBuffer;}
     public ConcurrentLinkedQueue<BattleResult> getBattleResultBuffer() { return battleResultsBuffer; }
     public ConcurrentLinkedQueue<PlayerSession> getSessionBuffer() { return sessionBuffer; }
     public ConcurrentLinkedQueue<RaidInteraction> getRaidBuffer() { return raidBuffer; }
@@ -69,7 +72,11 @@ public class DataRepository {
 
     public void addCaught(CaughtPokemon data) { caughtPokemonBuffer.add(data); }
     public void addReleased(ReleasedPokemon data) { releasedPokemonBuffer.add(data); }
-    public void addHatched(PokemonHatched data) { hatchedPokemonBuffer.add(data); }
+    public void addBred(PokemonBred data) {
+        if (processedEggUuids.add(data.pokemonUuid())) {
+            bredBuffer.add(data);
+        }
+    }
     public void addBattleResult(BattleResult data) { battleResultsBuffer.add(data); }
     public void addSession(PlayerSession data) { sessionBuffer.add(data); }
     public void addRaidInteraction(RaidInteraction data) { raidBuffer.add(data); }
@@ -103,6 +110,27 @@ public class DataRepository {
 
     public RaidMetadata removeRaidMetadata(UUID battleId) {
         return raidMetadataCache.remove(battleId);
+    }
+
+    // Method to clean cache periodically
+    public void clearEggCache() {
+        if (processedEggUuids.size() > 10000) {
+            processedEggUuids.clear();
+        }
+    }
+
+    public boolean isEggProcessed(String pokemonUuid) {
+        return processedEggUuids.contains(pokemonUuid);
+    }
+
+    // Marcar el ITEM FÍSICO como procesado
+    public void markItemAsProcessed(UUID itemEntityUuid) {
+        processedItemEntities.add(itemEntityUuid);
+
+        // Limpieza de emergencia por si crece mucho muy rápido
+        if (processedItemEntities.size() > 5000) {
+            processedItemEntities.clear();
+        }
     }
 
     public void logDamage(UUID battleId, UUID playerUuid, float damage) {

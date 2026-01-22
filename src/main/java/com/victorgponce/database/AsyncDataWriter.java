@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.victorgponce.config.ConfigManager;
+import com.victorgponce.config.NeuralNetworkConfig;
 import com.victorgponce.model.*;
 import com.victorgponce.repository.DataRepository;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class AsyncDataWriter {
         // LifeCycle
         drainToBatch(repo.getCaughtBuffer(), batch, "LIFECYCLE", "POKEMON_CAPTURED");
         drainToBatch(repo.getReleasedBuffer(), batch, "LIFECYCLE", "POKEMON_RELEASED");
-        drainToBatch(repo.getHatchedBuffer(), batch, "LIFECYCLE", "POKEMON_HATCHED");
+        drainToBatch(repo.getBredBuffer(), batch, "LIFECYCLE", "POKEMON_BRED");
 
         // Combat
         drainToBatch(repo.getBattleResultBuffer(), batch, "COMBAT", "BATTLE_END");
@@ -109,6 +110,7 @@ public class AsyncDataWriter {
 
             // Construct final object that will be sent to the API
             JsonObject payload = new JsonObject();
+            payload.addProperty("server_id", ConfigManager.get().serverId);
             payload.addProperty("player_uuid", uuid);
             payload.addProperty("category", category);
             payload.addProperty("action_type", finalAction);
@@ -157,7 +159,7 @@ public class AsyncDataWriter {
 
     private static boolean isEmpty(DataRepository repo) {
         return repo.getCaughtBuffer().isEmpty() && repo.getReleasedBuffer().isEmpty() &&
-                repo.getHatchedBuffer().isEmpty() && repo.getBattleResultBuffer().isEmpty() &&
+                repo.getBredBuffer().isEmpty() && repo.getBattleResultBuffer().isEmpty() &&
                 repo.getRaidBuffer().isEmpty() && repo.getGtsBuffer().isEmpty() &&
                 repo.getSessionBuffer().isEmpty() && repo.getSnapshotBuffer().isEmpty() &&
                 repo.getCommandBuffer().isEmpty() && repo.getDeathBuffer().isEmpty();
