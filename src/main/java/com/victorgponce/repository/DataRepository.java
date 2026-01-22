@@ -1,5 +1,6 @@
 package com.victorgponce.repository;
 
+import com.victorgponce.config.CacheManager;
 import com.victorgponce.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class DataRepository {
     private final ConcurrentLinkedQueue<PlayerSession> sessionBuffer = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<RaidInteraction> raidBuffer = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<SessionSnapshot> snapshotBuffer = new ConcurrentLinkedQueue<>();
-    private final Set<String> processedEggUuids = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<String> processedEggUuids = Collections.synchronizedSet(new HashSet<>(CacheManager.loadProcessedEggs()));
     private final Set<UUID> processedItemEntities = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private final ConcurrentLinkedQueue<GtsTransaction> gtsBuffer = new ConcurrentLinkedQueue<>();
@@ -75,8 +76,11 @@ public class DataRepository {
     public void addBred(PokemonBred data) {
         if (processedEggUuids.add(data.pokemonUuid())) {
             bredBuffer.add(data);
+
+            CacheManager.markDirty();
         }
     }
+
     public void addBattleResult(BattleResult data) { battleResultsBuffer.add(data); }
     public void addSession(PlayerSession data) { sessionBuffer.add(data); }
     public void addRaidInteraction(RaidInteraction data) { raidBuffer.add(data); }
@@ -112,25 +116,25 @@ public class DataRepository {
         return raidMetadataCache.remove(battleId);
     }
 
-    // Method to clean cache periodically
-    public void clearEggCache() {
-        if (processedEggUuids.size() > 10000) {
-            processedEggUuids.clear();
-        }
-    }
-
     public boolean isEggProcessed(String pokemonUuid) {
         return processedEggUuids.contains(pokemonUuid);
     }
 
-    // Marcar el ITEM FÍSICO como procesado
-    public void markItemAsProcessed(UUID itemEntityUuid) {
-        processedItemEntities.add(itemEntityUuid);
-
-        // Limpieza de emergencia por si crece mucho muy rápido
-        if (processedItemEntities.size() > 5000) {
-            processedItemEntities.clear();
+    public void runAutosave() {
+        // Make a set copy to avoid any conflict with the game
+        Set<String> copyToSave;
+        synchronized (processedEggUuids) {
+            copyToSave = new HashSet<>(processedEggUuids);
         }
+        CacheManager.saveAsync(copyToSave);
+    }
+
+    public void saveOnShutdown() {
+        Set<String> copyToSave;
+        synchronized (processedEggUuids) {
+            copyToSave = new HashSet<>(processedEggUuids);
+        }
+        CacheManager.saveSync(copyToSave);
     }
 
     public void logDamage(UUID battleId, UUID playerUuid, float damage) {
@@ -162,7 +166,7 @@ public class DataRepository {
         Set<String> visited = biomeTracker.get(playerUuid);
         if (visited == null) return new HashSet<>();
 
-        // Creamos copia para devolver y limpiamos el tracker
+        // Create copy to return and clean the tracker
         Set<String> copy = new HashSet<>(visited);
         visited.clear();
         return copy;

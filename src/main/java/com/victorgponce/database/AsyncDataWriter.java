@@ -36,13 +36,18 @@ public class AsyncDataWriter {
 
     public static void start() {
         int interval = ConfigManager.get().batchIntervalSeconds;
-        // Start sending cicle
-        scheduler.scheduleAtFixedRate(AsyncDataWriter::flushBuffers, interval, interval, TimeUnit.SECONDS);
-        LOGGER.info("API Writer Started. ENDPOINT: {}", ConfigManager.get().apiUrl);
-    }
 
+        scheduler.scheduleAtFixedRate(AsyncDataWriter::flushBuffers, interval, interval, TimeUnit.SECONDS);
+
+        // AutoSave task (Every 5 mins)
+        scheduler.scheduleAtFixedRate(() -> {
+            DataRepository.getInstance().runAutosave();
+        }, 5, 5, TimeUnit.MINUTES);
+
+        LOGGER.info("API Writer & Cache Autosave Started.");
+    }
     public static void stop() {
-        flushBuffers(); // Send last data before shutdown
+        flushBuffers();
         scheduler.shutdown();
         try {
             if (!scheduler.awaitTermination(5, TimeUnit.SECONDS)) {

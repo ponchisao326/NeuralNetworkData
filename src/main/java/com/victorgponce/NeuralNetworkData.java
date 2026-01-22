@@ -3,6 +3,7 @@ package com.victorgponce;
 import com.victorgponce.config.ConfigManager;
 import com.victorgponce.controller.*;
 import com.victorgponce.database.AsyncDataWriter;
+import com.victorgponce.repository.DataRepository;
 import com.victorgponce.view.GetBufferedData;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -39,6 +40,7 @@ public class NeuralNetworkData implements ModInitializer {
         // Shutdown Hook (Save data on server shutdown)
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> {
             LOGGER.info("Shutting down NeuralNetworkData. Sending data to API...");
+            DataRepository.getInstance().saveOnShutdown();
             AsyncDataWriter.stop();
         });
     }
