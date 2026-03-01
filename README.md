@@ -1,4 +1,4 @@
-PYTHON LOGIC PROCESSOR: (https://github.com/ponchisao326/NeuralNetworkDataRefactor)[NeuralNetworkDataProcessor]
+PYTHON LOGIC PROCESSOR: https://github.com/ponchisao326/NeuralNetworkDataRefactor
 
 # CobbleAnalytics (ServerBrain)
 
